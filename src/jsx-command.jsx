@@ -45,7 +45,7 @@ class JSXCommand {
 			"Options:\n" +
 			"  --add-search-path path     adds a path to library search paths\n" +
 			"  --executable RUNENV        adds launcher to call _Main.main(:string[]):void\n" +
-			"                             supported RUNENV is node, commonjs and web.\n" +
+			"                             supported RUNENV is node, commonjs, mongo and web.\n" +
 			"  --run                      runs _Main.main(:string[]):void after compiling\n" +
 			"  --test                     runs _Test#test*():void after compiling\n" +
 			"  --output file              output file (default:stdout)\n" +
@@ -231,8 +231,14 @@ class JSXCommand {
 						emitter.addHeader(shebang);
 					});
 					break;
+				case "mongo": // implies JavaScriptEmitter
+					tasks.push(function () : void {
+						var shebang =  "#!/usr/bin/env mongo\nvar console = { log : function (args) { print(args); } };\n";
+						emitter.addHeader(shebang);
+					});
+					break;
 				default:
-					platform.error("unknown executable type (node|web)");
+					platform.error("unknown executable type (node|web|commonjs|mongo)");
 					return 1;
 				}
 				executable = optarg;
